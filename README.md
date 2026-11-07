@@ -10,6 +10,8 @@ This case study is a **personal project** that analyzes a fictional business fro
 
 
 
+# Business Performance Questions
+
 ### Business Question 1
 **What is the total recognized revenue generated between 2022 and 2026?**
 
