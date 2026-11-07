@@ -134,5 +134,39 @@ ORDER BY margin_change_pp ASC, revenue_growth_pct DESC;
 # Customer Segmentation and Market Intelligence Questions
 
 
+## 1. Which industries generate the greatest customer revenue?
+
+Identifies the highest-revenue industries, helping leadership prioritize valuable customer markets and uncover opportunities for targeted investment.
+
+### SQL Query
+
+```sql
+USE product_intelligence_2022_2026_v4;
+
+WITH industry_revenue AS (
+    SELECT c.industry,
+        COUNT(DISTINCT c.customer_id) AS total_customers,
+        ROUND(SUM(i.amount_paid),2) AS total_revenue
+    FROM customers c
+    JOIN subscriptions s ON c.customer_id=s.customer_id
+    JOIN invoices i ON s.subscription_id=i.subscription_id
+    WHERE i.payment_status='Paid'
+      AND CAST(i.invoice_date AS DATE) BETWEEN '2022-01-01' AND '2026-12-31'
+    GROUP BY c.industry
+)
+SELECT industry, total_customers, total_revenue,
+    ROUND(total_revenue/NULLIF(total_customers,0),2) AS revenue_per_customer,
+    ROUND(100*total_revenue/NULLIF(SUM(total_revenue) OVER (),0),2) AS revenue_share_pct
+FROM industry_revenue
+ORDER BY total_revenue DESC;
+```
+
+### Results
+
+![Industry Revenue Analysis](https://paper-attachments.dropboxusercontent.com/s_A13B3434EC2F7B53476EAA3038EE14284FECA31A9A8F827AE859B9C0A2F42694_1794039032881_file.png
+### Strategic Recommendation
+
+Prioritize customer acquisition and market development across **Technology, Retail, and Media**, while evaluating customer profitability and diversifying revenue streams to reduce industry concentration risk.
+
 
 
