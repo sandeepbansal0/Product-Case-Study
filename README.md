@@ -131,8 +131,7 @@ ORDER BY margin_change_pp ASC, revenue_growth_pct DESC;
 
 ![Revenue Growth and Declining Profitability](https://paper-attachments.dropboxusercontent.com/s_A13B3434EC2F7B53476EAA3038EE14284FECA31A9A8F827AE859B9C0A2F42694_1794038362111_file.png)
 
-
-
+# Customer Segmentation and Market Intelligence Questions
 
 
 
