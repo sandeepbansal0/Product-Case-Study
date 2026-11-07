@@ -1,9 +1,12 @@
 # Product-Case-Study
 
+
 # What drives business growth, profitability, and long-term success?
-This case study is a **personal project**, that analyzes a fictional business from 2022–2026, using **52 database tables and 120 strategic business questions across 15 analytical domains**.
-📢  Using SQL, financial analysis, and data visualization, the project explores revenue                             performance, customer retention, pricing, product profitability, and market opportunities to             uncover actionable insights.
-📢  **Objective:** Transform complex business data into strategic recommendations that help                     leadership optimize investments, reduce risks, and drive sustainable growth.
+
+This case study is a **personal project** that analyzes a fictional business from 2022–2026, using **52 database tables and 120 strategic business questions across 15 analytical domains**.
+
+- 📢 **Analysis:** Using SQL, financial analysis, and data visualization, the project explores revenue performance, customer retention, pricing, product profitability, and market opportunities to uncover actionable insights.
+- 📢 **Objective:** Transform complex business data into strategic recommendations that help leadership optimize investments, reduce risks, and drive sustainable growth.
 
 
 
