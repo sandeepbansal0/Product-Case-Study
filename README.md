@@ -1,73 +1,82 @@
-# Product-Case-Study
 
+# Product Case Study
 
-# What drives business growth, profitability, and long-term success?
+# What Drives Business Growth, Profitability, and Long-Term Success?
 
-This case study is a **personal project** that analyzes a fictional business from 2022–2026, using **52 database tables and 120 strategic business questions across 15 analytical domains**.
+This case study is a **personal project** analyzing a fictional business from 2022–2026, using **52 database tables and 120 strategic business questions across 15 analytical domains**.
 
 - 📢 **Analysis:** Using SQL, financial analysis, and data visualization, the project explores revenue performance, customer retention, pricing, product profitability, and market opportunities to uncover actionable insights.
 - 📢 **Objective:** Transform complex business data into strategic recommendations that help leadership optimize investments, reduce risks, and drive sustainable growth.
 
+---
 
+# 1. Business Performance Questions
 
-# Business Performance Questions
+## Business Question 1: What is the total recognized revenue generated between 2022 and 2026?
 
-### Business Question 1
-**What is the total recognized revenue generated between 2022 and 2026?**
+**Objective:** Evaluate historical revenue performance, identify growth trends, and assess the company's overall financial trajectory.
+
+### SQL Query
 
 ```sql
 USE product_intelligence_2022_2026_v4;
 
 WITH annual AS (
     SELECT YEAR(CAST(month_start AS DATE)) AS yr,
-           SUM(recognized_revenue) AS revenue
+        SUM(recognized_revenue) AS revenue
     FROM product_unit_economics_monthly
     WHERE CAST(month_start AS DATE) BETWEEN '2022-01-01' AND '2026-12-31'
     GROUP BY yr
 )
-SELECT COALESCE(CAST(yr AS CHAR), 'TOTAL') AS revenue_year,
-       ROUND(SUM(revenue), 2) AS total_revenue
+SELECT COALESCE(CAST(yr AS CHAR),'TOTAL') AS revenue_year,
+    ROUND(SUM(revenue),2) AS total_revenue
 FROM annual
 GROUP BY yr WITH ROLLUP;
 ```
+
 ### Results
 
+![Annual Recognized Revenue](https://paper-attachments.dropboxusercontent.com/s_A13B3434EC2F7B53476EAA3038EE14284FECA31A9A8F827AE859B9C0A2F42694_1794036797651_file.png)
 
-![](https://paper-attachments.dropboxusercontent.com/s_A13B3434EC2F7B53476EAA3038EE14284FECA31A9A8F827AE859B9C0A2F42694_1794036797651_file.png)
+### Executive Insight
 
+The business generated **$30.79 million in recognized revenue** between 2022 and 2026. Annual revenue increased from approximately **$0.95 million to $11.53 million**, representing substantial growth over the five-year period.
 
+### Strategic Recommendation
 
-# 
+Prioritize sustainable growth by investigating slowing year-over-year momentum and directing investment toward products and channels demonstrating strong revenue performance and profitability.
 
+---
 
-## 2. How concentrated is revenue among the top five products?
+## Business Question 2: How concentrated is revenue among the top five products?
 
-*This query identifies the top five revenue-generating products, calculates each product's contribution to total company revenue, and measures their combined revenue concentration from 2022–2026.*
+**Objective:** Evaluate revenue concentration, identify product dependencies, and assess potential risks associated with reliance on a limited number of products.
 
+### SQL Query
 
 ```sql
 USE product_intelligence_2022_2026_v4;
 
 WITH product_revenue AS (
     SELECT p.product_name,
-           ROUND(SUM(u.recognized_revenue), 2) AS total_revenue
+        ROUND(SUM(u.recognized_revenue),2) AS total_revenue
     FROM product_unit_economics_monthly u
-    JOIN products p ON u.product_id = p.product_id
+    JOIN products p ON u.product_id=p.product_id
     WHERE CAST(u.month_start AS DATE) BETWEEN '2022-01-01' AND '2026-12-31'
     GROUP BY p.product_id, p.product_name
 ),
 ranked AS (
     SELECT *,
-           ROW_NUMBER() OVER (ORDER BY total_revenue DESC) AS revenue_rank,
-           SUM(total_revenue) OVER () AS company_revenue
+        ROW_NUMBER() OVER (ORDER BY total_revenue DESC) AS revenue_rank,
+        SUM(total_revenue) OVER () AS company_revenue
     FROM product_revenue
 )
 SELECT revenue_rank, product_name, total_revenue,
-       ROUND(100 * total_revenue / NULLIF(company_revenue, 0), 2) AS revenue_share_pct,
-       ROUND(100 * SUM(total_revenue) OVER (ORDER BY revenue_rank)
-             / NULLIF(company_revenue, 0), 2) AS cumulative_revenue_share_pct
+    ROUND(100*total_revenue/NULLIF(company_revenue,0),2) AS revenue_share_pct,
+    ROUND(100*SUM(total_revenue) OVER (
+        ORDER BY revenue_rank)/NULLIF(company_revenue,0),2) AS cumulative_revenue_share_pct
 FROM ranked
-WHERE revenue_rank <= 5
+WHERE revenue_rank<=5
 ORDER BY revenue_rank;
 ```
 
@@ -75,11 +84,19 @@ ORDER BY revenue_rank;
 
 ![Top Five Revenue Concentration](https://paper-attachments.dropboxusercontent.com/s_A13B3434EC2F7B53476EAA3038EE14284FECA31A9A8F827AE859B9C0A2F42694_1794037482135_file.png)
 
+### Executive Insight
 
+The five highest-revenue products contribute approximately **39.48% of total company revenue**. NexaVision AI leads with **8.46%**, followed by CloudSphere CRM at **8.20%**, highlighting the importance of the company's leading products.
 
-## 3. Which products demonstrate strong revenue growth but declining profitability?
+### Strategic Recommendation
 
-Identifies products experiencing strong revenue growth while gross profit margins deteriorate, revealing hidden financial risks and cost inefficiencies.
+Protect revenue generated by top-performing products while investing in promising emerging products to diversify revenue streams, reduce concentration risk, and support long-term growth.
+
+---
+
+## Business Question 3: Which products demonstrate strong revenue growth but declining profitability?
+
+**Objective:** Identify products experiencing strong revenue growth alongside deteriorating gross profit margins, uncovering hidden financial risks and potential cost inefficiencies.
 
 ### SQL Query
 
@@ -127,16 +144,25 @@ WHERE revenue_growth_pct>10 AND margin_change_pp<0
 ORDER BY margin_change_pp ASC, revenue_growth_pct DESC;
 ```
 
-### Business Performance Visualization
+### Results
 
 ![Revenue Growth and Declining Profitability](https://paper-attachments.dropboxusercontent.com/s_A13B3434EC2F7B53476EAA3038EE14284FECA31A9A8F827AE859B9C0A2F42694_1794038362111_file.png)
 
-# Customer Segmentation and Market Intelligence Questions
+### Executive Insight
 
+Five products achieved revenue growth exceeding **10%** while experiencing declining gross profit margins. **SupplyPilot 360** recorded the strongest revenue growth at **267.22%**, but also experienced the largest margin decline of **14 percentage points**, revealing potential cost pressures.
 
-## 1. Which industries generate the greatest customer revenue?
+### Strategic Recommendation
 
-Identifies the highest-revenue industries, helping leadership prioritize valuable customer markets and uncover opportunities for targeted investment.
+Prioritize cost diagnostics and margin recovery for **SupplyPilot 360** and **EcoTrack Sustainability**. Tie additional investment to measurable profitability improvements rather than revenue growth alone.
+
+---
+
+# 2. Customer Segmentation and Market Intelligence Questions
+
+## Business Question 1: Which industries generate the greatest customer revenue?
+
+**Objective:** Identify the highest-revenue industries, evaluate customer value across markets, and uncover opportunities for targeted customer acquisition and investment.
 
 ### SQL Query
 
@@ -163,10 +189,14 @@ ORDER BY total_revenue DESC;
 
 ### Results
 
-![Industry Revenue Analysis](https://paper-attachments.dropboxusercontent.com/s_A13B3434EC2F7B53476EAA3038EE14284FECA31A9A8F827AE859B9C0A2F42694_1794039032881_file.png
+![Industry Revenue Analysis](https://paper-attachments.dropboxusercontent.com/s_A13B3434EC2F7B53476EAA3038EE14284FECA31A9A8F827AE859B9C0A2F42694_1794039032881_file.png)
+
+### Executive Insight
+
+**Technology** leads industry revenue at **$1,547**, followed by **Retail ($1,399)** and **Media ($1,298)**. Together, these industries account for approximately **66.4% of total revenue**, highlighting their importance to overall business performance.
+
 ### Strategic Recommendation
 
 Prioritize customer acquisition and market development across **Technology, Retail, and Media**, while evaluating customer profitability and diversifying revenue streams to reduce industry concentration risk.
 
-
-
+---
